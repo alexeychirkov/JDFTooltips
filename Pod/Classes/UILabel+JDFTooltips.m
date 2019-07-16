@@ -49,7 +49,7 @@
     }
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:self.text attributes:@{NSFontAttributeName: self.font}];
     CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, self.frame.size.height) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
-    return ceil(rect.size.width);
+    return ceil(rect.size.width + 10 /*additional padding*/);
 }
 
 @end

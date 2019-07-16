@@ -225,6 +225,9 @@
     labelFrame.size.width = width - [self arrowHeight] - [self labelPadding]; // arrowHeight and labelPadding should be doubled before subtracting?
     labelFrame.origin.y = [self arrowHeight] + [self labelPadding];
     self.tooltipTextLabel.frame = labelFrame;
+    if (width > [self.tooltipTextLabel jdftt_requiredWidthToFitContents]) {
+        [self.tooltipTextLabel jdftt_resizeWidthToFitTextContents];
+    }
     [self.tooltipTextLabel jdftt_resizeHeightToFitTextContents];
     
     CGRect tooltipFrame = [self tooltipFrameForArrowPoint:point width:(self.tooltipTextLabel.frame.size.width + [self arrowHeight] + [self labelPadding]) labelFrame:labelFrame arrowDirection:self.arrowDirection hostViewSize:self.superview.frame.size];

@@ -78,7 +78,7 @@
     self.tooltipManager = [[JDFSequentialTooltipManager alloc] initWithHostView:self.view];
     [self.tooltipManager addTooltipWithTargetView:self.label1 hostView:self.view tooltipText:@"This is a tooltip with the backrop enabled. Tap anywhere to advance to the next tooltip." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth];
     [self.tooltipManager addTooltipWithTargetView:self.label2 hostView:self.view tooltipText:@"This is another tooltip.  You can choose which direction the arrow points; this one is pointing up." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth];
-    [self.tooltipManager addTooltipWithTargetView:self.label3 hostView:self.view tooltipText:@"This is the last tooltip. Tap anywhere to finish the sequence." arrowDirection:JDFTooltipViewArrowDirectionDown width:tooltipWidth];
+    [self.tooltipManager addTooltipWithTargetView:self.label3 hostView:self.view tooltipText:@"This is the last small tooltip" arrowDirection:JDFTooltipViewArrowDirectionDown width:tooltipWidth];
     self.tooltipManager.showsBackdropView = YES;
     [self.tooltipManager showNextTooltip];
 }
