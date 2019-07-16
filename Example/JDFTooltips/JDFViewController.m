@@ -73,7 +73,7 @@
 
 - (void)showWithBackdropButtonPressed:(UIBarButtonItem *)sender
 {
-    CGFloat tooltipWidth = 260.0f;
+    CGFloat tooltipWidth = 360.0f;
     
     self.tooltipManager = [[JDFSequentialTooltipManager alloc] initWithHostView:self.view];
     [self.tooltipManager addTooltipWithTargetView:self.label1 hostView:self.view tooltipText:@"This is a tooltip with the backrop enabled. Tap anywhere to advance to the next tooltip." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth];

@@ -225,11 +225,16 @@
     labelFrame.size.width = width - [self arrowHeight] - [self labelPadding]; // arrowHeight and labelPadding should be doubled before subtracting?
     labelFrame.origin.y = [self arrowHeight] + [self labelPadding];
     self.tooltipTextLabel.frame = labelFrame;
+    NSLog(@"%p : self.tooltipTextLabel.frame before : %@", (__bridge void *) self, NSStringFromCGRect(self.tooltipTextLabel.frame));
+    NSLog(@"%p : width : %f", (__bridge void *) self, width);
+    NSLog(@"%p : [self.tooltipTextLabel jdftt_requiredWidthToFitContents] : %f", (__bridge void *) self, [self.tooltipTextLabel jdftt_requiredWidthToFitContents]);
     if (width > [self.tooltipTextLabel jdftt_requiredWidthToFitContents]) {
+        NSLog(@"call jdftt_resizeWidthToFitTextContents");
         [self.tooltipTextLabel jdftt_resizeWidthToFitTextContents];
     }
     [self.tooltipTextLabel jdftt_resizeHeightToFitTextContents];
-    
+    NSLog(@"%p : self.tooltipTextLabel.frame after : %@", (__bridge void *) self, NSStringFromCGRect(self.tooltipTextLabel.frame));
+
     CGRect tooltipFrame = [self tooltipFrameForArrowPoint:point width:(self.tooltipTextLabel.frame.size.width + [self arrowHeight] + [self labelPadding]) labelFrame:labelFrame arrowDirection:self.arrowDirection hostViewSize:self.superview.frame.size];
     self.frame = tooltipFrame;
     
