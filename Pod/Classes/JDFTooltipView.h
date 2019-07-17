@@ -139,7 +139,7 @@ typedef void (^JDFTooltipViewCompletionBlock)(void);
  *
  *  @return An initialised JDFTooltipView.
  */
-- (instancetype)initWithTargetPoint:(CGPoint)targetPoint hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock;
+- (instancetype)initWithTargetPoint:(CGPoint)targetPoint hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock tapCompletionBlock:(JDFTooltipViewCompletionBlock)tapCompletionBlock;
 
 /**
  *  Initialises a JDFTooltipView. The tooltip will try to position the arrow pointing towards the targetView, in the specified direction.
@@ -167,7 +167,7 @@ typedef void (^JDFTooltipViewCompletionBlock)(void);
  *
  *  @return An initialised JDFTooltipView.
  */
-- (instancetype)initWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock;
+- (instancetype)initWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock tapCompletionBlock:(JDFTooltipViewCompletionBlock)tapCompletionBlock;
 
 /**
  *  Initialises a JDFTooltipView. The tooltip will try to position the arrow pointing towards the barButtonItem, in the specified direction.
@@ -197,6 +197,8 @@ typedef void (^JDFTooltipViewCompletionBlock)(void);
  */
 - (instancetype)initWithTargetBarButtonItem:(UIBarButtonItem *)barButtonItem hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock;
 
++ (CGPoint)pointForTargetView:(UIView *)targetView arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection superview:(UIView *)superview;
+
 #pragma mark Showing/Hiding Tooltips
 /**
  *  Shows the tooltip.
@@ -215,7 +217,7 @@ typedef void (^JDFTooltipViewCompletionBlock)(void);
  *
  *  @param animated BOOL determining whether to animate the hide or not.
  */
-- (void)hideAnimated:(BOOL)animated;
+- (void)hideAnimated:(BOOL)animated completion:(void (^)())completion;
 
 #pragma mark Gesture Recognising
 /**

@@ -32,8 +32,7 @@
         [self.currentlyShowingTooltip addTapTarget:self action:@selector(handleTooltipTap:)];
         [self showTooltip:self.currentlyShowingTooltip];
     } else {
-        [self.currentlyShowingTooltip hideAnimated:YES];
-        
+        [self.currentlyShowingTooltip hideAnimated:YES completion:nil];
         NSUInteger i = [self.tooltips indexOfObject:self.currentlyShowingTooltip] + 1;
         if (i < self.tooltips.count) {
             self.currentlyShowingTooltip = self.tooltips[i];

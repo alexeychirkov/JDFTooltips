@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "JDFTooltips"
-  s.version          = "1.3.1"
+  s.version          = "1.3.2"
   s.summary          = "A simple library for showing tooltip-like popups on iOS"
   s.description      = <<-DESC
                        JDFTooltips is simple library for showing tooltip-like popups on iOS

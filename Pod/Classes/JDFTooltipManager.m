@@ -94,7 +94,7 @@
 
 - (void)addTooltipWithTargetPoint:(CGPoint)targetPoint tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection hostView:(UIView *)hostView width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock
 {
-    JDFTooltipView *tooltip = [[JDFTooltipView alloc] initWithTargetPoint:targetPoint hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock];
+    JDFTooltipView *tooltip = [[JDFTooltipView alloc] initWithTargetPoint:targetPoint hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock tapCompletionBlock:nil];
     [self addTooltip:tooltip];
 }
 
@@ -104,9 +104,9 @@
     [self addTooltip:tooltip];
 }
 
-- (void)addTooltipWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock
+- (void)addTooltipWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock tapCompletionBlock:(JDFTooltipViewCompletionBlock)tapCompletionBlock
 {
-    JDFTooltipView *tooltip = [[JDFTooltipView alloc] initWithTargetView:targetView hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock];
+    JDFTooltipView *tooltip = [[JDFTooltipView alloc] initWithTargetView:targetView hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock tapCompletionBlock:tapCompletionBlock];
     [self addTooltip:tooltip];
 }
 
@@ -158,7 +158,7 @@
         if (![tooltip isKindOfClass:[JDFTooltipView class]]) {
             continue;
         }
-        [tooltip hideAnimated:animated];
+        [tooltip hideAnimated:animated completion:nil];
     }
     [self hideBackdropView];
 }

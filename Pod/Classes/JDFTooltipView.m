@@ -16,6 +16,8 @@
 
 @interface JDFTooltipView ()
 
+@property (nonatomic) BOOL isHiddenAndRemovedFromSuperview;
+
 @property (nonatomic, strong) UILabel *tooltipTextLabel;
 
 @property (nonatomic) CGPoint arrowPoint;
@@ -25,8 +27,9 @@
 @property (nonatomic, weak) UIView *targetView;
 @property (nonatomic, weak) UIBarButtonItem *targetBarButtonItem;
 
-@property (nonatomic, copy) void (^showCompletionBlock)(void);
-@property (nonatomic, copy) void (^hideCompletionBlock)(void);
+@property (nonatomic, copy) JDFTooltipViewCompletionBlock showCompletionBlock;
+@property (nonatomic, copy) JDFTooltipViewCompletionBlock hideCompletionBlock;
+@property (nonatomic, copy) JDFTooltipViewCompletionBlock tapCompletionBlock;
 
 @property (nonatomic, strong) UIGestureRecognizer *tapGestureRecogniser;
 
@@ -114,13 +117,13 @@
 
 - (instancetype)initWithTargetPoint:(CGPoint)targetPoint hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width
 {
-    self = [self initWithTargetPoint:targetPoint hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:nil hideCompletionBlock:nil];
+    self = [self initWithTargetPoint:targetPoint hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:nil hideCompletionBlock:nil tapCompletionBlock:nil];
     return self;
 }
 
-- (instancetype)initWithTargetPoint:(CGPoint)targetPoint hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock;
+- (instancetype)initWithTargetPoint:(CGPoint)targetPoint hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock tapCompletionBlock:(JDFTooltipViewCompletionBlock)tapCompletionBlock;
 {
-    self = [self initWithTargetView:nil hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock];
+    self = [self initWithTargetView:nil hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock tapCompletionBlock:tapCompletionBlock];
     if (self) {
         self.arrowPoint = targetPoint;
     }
@@ -129,11 +132,11 @@
 
 - (instancetype)initWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width
 {
-    self = [self initWithTargetView:targetView hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:nil hideCompletionBlock:nil];
+    self = [self initWithTargetView:targetView hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:nil hideCompletionBlock:nil tapCompletionBlock:nil];
     return self;
 }
 
-- (instancetype)initWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(void (^)(void))showCompletionBlock hideCompletionBlock:(void (^)(void))hideCompletionBlock
+- (instancetype)initWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock tapCompletionBlock:(JDFTooltipViewCompletionBlock)tapCompletionBlock
 {
     self = [super initWithFrame:CGRectZero];
     if (self) {
@@ -146,6 +149,7 @@
         self.arrowPoint = [self pointForTargetView:targetView arrowDirection:arrowDirection];
         self.showCompletionBlock = showCompletionBlock;
         self.hideCompletionBlock = hideCompletionBlock;
+        self.tapCompletionBlock = tapCompletionBlock;
     }
     return self;
 }
@@ -157,7 +161,7 @@
 
 - (instancetype)initWithTargetBarButtonItem:(UIBarButtonItem *)barButtonItem hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock
 {
-    self = [self initWithTargetView:nil hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock];
+    self = [self initWithTargetView:nil hostView:hostView tooltipText:tooltipText arrowDirection:arrowDirection width:width showCompletionBlock:showCompletionBlock hideCompletionBlock:hideCompletionBlock tapCompletionBlock:nil];
     if (self) {
         self.targetBarButtonItem = barButtonItem;
         self.arrowPoint = [self pointForTargetView:self.targetView arrowDirection:arrowDirection];
@@ -199,8 +203,11 @@
 
 - (void)handleTapGesture:(UIGestureRecognizer *)gestureRecogniser
 {
+    if (self.tapCompletionBlock) {
+        self.tapCompletionBlock();
+    }
     if (self.dismissOnTouch) {
-        [self hideAnimated:YES];
+        [self hideAnimated:YES completion:nil];
     }
 }
 
@@ -225,15 +232,10 @@
     labelFrame.size.width = width - [self arrowHeight] - [self labelPadding]; // arrowHeight and labelPadding should be doubled before subtracting?
     labelFrame.origin.y = [self arrowHeight] + [self labelPadding];
     self.tooltipTextLabel.frame = labelFrame;
-    NSLog(@"%p : self.tooltipTextLabel.frame before : %@", (__bridge void *) self, NSStringFromCGRect(self.tooltipTextLabel.frame));
-    NSLog(@"%p : width : %f", (__bridge void *) self, width);
-    NSLog(@"%p : [self.tooltipTextLabel jdftt_requiredWidthToFitContents] : %f", (__bridge void *) self, [self.tooltipTextLabel jdftt_requiredWidthToFitContents]);
     if (width > [self.tooltipTextLabel jdftt_requiredWidthToFitContents]) {
-        NSLog(@"call jdftt_resizeWidthToFitTextContents");
         [self.tooltipTextLabel jdftt_resizeWidthToFitTextContents];
     }
     [self.tooltipTextLabel jdftt_resizeHeightToFitTextContents];
-    NSLog(@"%p : self.tooltipTextLabel.frame after : %@", (__bridge void *) self, NSStringFromCGRect(self.tooltipTextLabel.frame));
 
     CGRect tooltipFrame = [self tooltipFrameForArrowPoint:point width:(self.tooltipTextLabel.frame.size.width + [self arrowHeight] + [self labelPadding]) labelFrame:labelFrame arrowDirection:self.arrowDirection hostViewSize:self.superview.frame.size];
     self.frame = tooltipFrame;
@@ -272,7 +274,7 @@
 
 #pragma mark - Hiding the Tooltip
 
-- (void)hideAnimated:(BOOL)animated
+- (void)hideAnimated:(BOOL)animated completion:(void (^)())completion
 {
     if (animated) {
         [UIView animateWithDuration:0.1 delay:0.0 usingSpringWithDamping:0.6 initialSpringVelocity:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -287,15 +289,23 @@
                 self.alpha = 0.0f;
             } completion:^(BOOL finished3) {
                 [self removeFromSuperview];
-                if (self.hideCompletionBlock) {
+                if (!self.isHiddenAndRemovedFromSuperview && self.hideCompletionBlock) {
                     self.hideCompletionBlock();
+                }
+                self.isHiddenAndRemovedFromSuperview = YES;
+                if (completion) {
+                    completion();
                 }
             }];
         }];
     } else {
         [self removeFromSuperview];
-        if (self.hideCompletionBlock) {
+        if (!self.isHiddenAndRemovedFromSuperview && self.hideCompletionBlock) {
             self.hideCompletionBlock();
+        }
+        self.isHiddenAndRemovedFromSuperview = YES;
+        if (completion) {
+            completion();
         }
     }
 }
@@ -307,7 +317,7 @@
 {
     // We can only try to layout ourselves out if we have a targetView.
     if (self.targetView) {
-        self.arrowPoint = [self pointForTargetView:self.targetView arrowDirection:self.arrowDirection];
+        self.arrowPoint = [self.class pointForTargetView:self.targetView arrowDirection:self.arrowDirection];
         CGRect newFrame = [self tooltipFrameForArrowPoint:self.arrowPoint width:self.width labelFrame:self.tooltipTextLabel.frame arrowDirection:self.arrowDirection hostViewSize:hostViewSize];
         self.frame = newFrame;
         [self setNeedsDisplay];
@@ -316,11 +326,13 @@
 
 
 #pragma mark - Layout (Internal)
+- (CGPoint)pointForTargetView:(UIView *)targetView arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection {
+    return [self.class pointForTargetView:targetView arrowDirection:arrowDirection superview:self.tooltipSuperview];
+}
 
-- (CGPoint)pointForTargetView:(UIView *)targetView arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection
-{
++ (CGPoint)pointForTargetView:(UIView *)targetView arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection superview:(UIView *)superview {
     CGPoint point = CGPointZero;
-    CGRect targetViewFrame = [targetView.superview convertRect:targetView.frame toView:self.tooltipSuperview];
+    CGRect targetViewFrame = [targetView.superview convertRect:targetView.frame toView:superview];
     if (arrowDirection == JDFTooltipViewArrowDirectionLeft) {
         point.x = CGRectGetMaxX(targetViewFrame);
         point.y = targetViewFrame.origin.y + (targetViewFrame.size.height / 2);

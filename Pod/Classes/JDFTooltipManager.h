@@ -214,7 +214,7 @@
  *  @param showCompletionBlock  Completion block that is executed after the tooltip is shown.
  *  @param hideCompletionBlock  Completion block that is executed after the tooltip is hidden.
  */
-- (void)addTooltipWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock;
+- (void)addTooltipWithTargetView:(UIView *)targetView hostView:(UIView *)hostView tooltipText:(NSString *)tooltipText arrowDirection:(JDFTooltipViewArrowDirection)arrowDirection width:(CGFloat)width showCompletionBlock:(JDFTooltipViewCompletionBlock)showCompletionBlock hideCompletionBlock:(JDFTooltipViewCompletionBlock)hideCompletionBlock tapCompletionBlock:(JDFTooltipViewCompletionBlock)tapCompletionBlock;
 
 /**
  *  Initialises a JDFTooltipView with @c initWithTargetBarButtonItem:hostView:tooltipText:arrowDirection:width: and adds it to the manager.

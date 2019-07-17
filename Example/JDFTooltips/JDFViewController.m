@@ -65,7 +65,6 @@
     self.showWithoutBackdropButton = [[UIBarButtonItem alloc] initWithTitle:@"Show (No Backdrop)" style:UIBarButtonItemStylePlain target:self action:@selector(showWithoutBackdropButtonPressed:)];
     self.navigationItem.rightBarButtonItem = self.showWithoutBackdropButton;
     
-    [self showWithBackdropButtonPressed:nil];
 }
 
 
@@ -76,10 +75,39 @@
     CGFloat tooltipWidth = 360.0f;
     
     self.tooltipManager = [[JDFSequentialTooltipManager alloc] initWithHostView:self.view];
-    [self.tooltipManager addTooltipWithTargetView:self.label1 hostView:self.view tooltipText:@"This is a tooltip with the backrop enabled. Tap anywhere to advance to the next tooltip." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth];
-    [self.tooltipManager addTooltipWithTargetView:self.label2 hostView:self.view tooltipText:@"This is another tooltip.  You can choose which direction the arrow points; this one is pointing up." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth];
-    [self.tooltipManager addTooltipWithTargetView:self.label3 hostView:self.view tooltipText:@"This is the last small tooltip" arrowDirection:JDFTooltipViewArrowDirectionDown width:tooltipWidth];
+    __weak __typeof(self) weakSelf = self;
+    [self.tooltipManager addTooltipWithTargetView:self.label1 hostView:self.view tooltipText:@"This is a tooltip with the backrop enabled. Tap anywhere to advance to the next tooltip." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth showCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"1 show!!!");
+    } hideCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"1 hide!!!");
+    } tapCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"1 tapped!!!");
+    }];
+    [self.tooltipManager addTooltipWithTargetView:self.label2 hostView:self.view tooltipText:@"This is another tooltip.  You can choose which direction the arrow points; this one is pointing up." arrowDirection:JDFTooltipViewArrowDirectionUp width:tooltipWidth showCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"2 show!!!");
+    } hideCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"2 hide!!!");
+    } tapCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"2 tapped!!!");
+    }];
+    [self.tooltipManager addTooltipWithTargetView:self.label3 hostView:self.view tooltipText:@"This is the last small tooltip" arrowDirection:JDFTooltipViewArrowDirectionDown width:tooltipWidth showCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"3 show!!!");
+    } hideCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"3 hide!!!");
+    } tapCompletionBlock:^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        NSLog(@"3 tapped!!!");
+    }];
     self.tooltipManager.showsBackdropView = YES;
+    NSLog(@"tooltips : %@", self.tooltipManager.tooltips);
     [self.tooltipManager showNextTooltip];
 }
 
@@ -98,7 +126,7 @@
     [self.tooltipManager addTooltipWithTargetView:self.label3 hostView:self.view tooltipText:@"This is the last tooltip." arrowDirection:JDFTooltipViewArrowDirectionDown width:tooltipWidth showCompletionBlock:nil hideCompletionBlock:^{
         weakSelf.showWithBackdropButton.enabled = YES;
         weakSelf.showWithoutBackdropButton.enabled = YES;
-    }];
+    } tapCompletionBlock:nil];
     self.tooltipManager.showsBackdropView = NO;
     [self.tooltipManager showNextTooltip];
 }
